@@ -19,18 +19,19 @@
           :flag true :default false]
          ["-v" "--verbose" "Display missing doc strings"
           :flag true :default false]
+         ["-r" "--allow-redefs-in-tests" "Allow with-redefs in test sources"
+          :flag true :default false]
          ["-m" "--max-line-length" "Max line length"
-          :default nil
           :parse-fn #(Integer/parseInt %)]
          ["-x" "--exclude-profiles" "Comma-separated profile exclusions"
-          :default nil
           :parse-fn #(mapv keyword (str/split % #","))])
         lein-opts (:bikeshed project)
         project (if-let [exclusions (seq (:exclude-profiles opts))]
                   (-> project
                       (project/unmerge-profiles exclusions)
                       (update-in [:profiles] #(apply dissoc % exclusions)))
-                  project)]
+                  project)
+        merged-opts (merge lein-opts opts)]
     (if (:help-me opts)
       (println banner)
       (lein/eval-in-project
@@ -38,12 +39,7 @@
            (update-in [:dependencies]
                       conj
                       ['lein-bikeshed-sortable "0.4.2-SNAPSHOT"]))
-       `(if (bikeshed.core/bikeshed
-             '~project
-             {:max-line-length (or (:max-line-length ~opts)
-                                   (:max-line-length ~lein-opts))
-              :verbose (:verbose ~opts)}
-             (select-keys ~opts [:max-line-length :verbose]))
+       `(if (bikeshed.core/bikeshed '~project ~merged-opts)
           (System/exit -1)
           (System/exit 0))
        '(require 'bikeshed.core)))))

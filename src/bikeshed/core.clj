@@ -174,7 +174,6 @@
 (defn bad-roots
   "Complain about the use of with-redefs."
   [source-files]
-  (println "\nChecking for redefined var roots in source directories.")
   (let [indexed-lines (fn [f]
                         (with-open [r (io/reader f)]
                           (doall
@@ -282,21 +281,32 @@
   "Bikesheds your project with totally arbitrary criteria. Returns true if the
   code has been bikeshedded and found wanting."
   [project & opts]
-  (let [source-files (remove
+  (let [get-files (fn [paths]
+                    (remove
                       #(starts-with? (.getName %) ".")
                       (mapcat
-                       #(-> % io/file
-                            (find-sources-in-dir [".clj" ".cljs" ".cljc" ".cljx"]))
-                       (flatten (get-all project :source-paths :test-paths))))
+                        #(-> % io/file
+                             (find-sources-in-dir [".clj" ".cljs" ".cljc" ".cljx"]))
+                        (flatten paths))))
+        all-source-files (get-files (get-all project :source-paths :test-paths))
         options (first opts)
+        allow-redefs-in-tests (:allow-redefs-in-tests options)
         long-lines (if (nil? (:max-line-length options))
-                     (long-lines source-files)
-                     (long-lines source-files
+                     (long-lines all-source-files)
+                     (long-lines all-source-files
                                  :max-line-length
                                  (:max-line-length options)))
-        trailing-whitespace (trailing-whitespace source-files)
-        trailing-blank-lines (trailing-blank-lines source-files)
-        bad-roots (bad-roots source-files)
+        trailing-whitespace (trailing-whitespace all-source-files)
+        trailing-blank-lines (trailing-blank-lines all-source-files)
+        non-test-files (get-files (get-all project :source-paths))
+        redefs-msg "\nChecking for redefined var roots in source directories."
+        redefs-msg (if allow-redefs-in-tests
+                     (str redefs-msg " (Test sources excluded.)")
+                     redefs-msg)
+        _ (println redefs-msg)
+        bad-roots (bad-roots (if allow-redefs-in-tests
+                               non-test-files
+                               all-source-files))
         bad-methods (missing-doc-strings project (:verbose options))
         bad-arguments (check-all-arguments project)]
     (or bad-arguments
