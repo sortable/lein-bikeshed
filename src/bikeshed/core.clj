@@ -118,14 +118,17 @@
   max-line-length defaults to 80."
   [source-files & {:keys [max-line-length] :or {max-line-length 80}}]
   (printf "\nChecking for lines longer than %s characters.\n" max-line-length)
-  (let [indexed-lines (fn [f]
+  (let [exception-re #";\s*bikeshed:\s*allow-long\s*$"
+        indexed-lines (fn [f]
                         (with-open [r (io/reader f)]
                           (doall
-                           (keep-indexed
-                            (fn [idx line]
-                              (when (> (count line) max-line-length)
-                                (trim (join ":" [(.getAbsolutePath f) (inc idx) line]))))
-                            (line-seq r)))))
+                            (keep-indexed
+                              (fn [idx line]
+                                (let [long-line (> (count line) max-line-length)
+                                      exception (re-find exception-re line)]
+                                  (when (and long-line (not exception))
+                                    (trim (join ":" [(.getAbsolutePath f) (inc idx) line])))))
+                              (line-seq r)))))
         all-long-lines (flatten (map indexed-lines source-files))]
     (if (empty? all-long-lines)
       (println "No lines found.")
