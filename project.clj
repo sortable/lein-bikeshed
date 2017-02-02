@@ -6,4 +6,4 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :eval-in :leiningen
   :dependencies [[org.clojure/tools.namespace "0.2.6"]]
-  :repositories [["snapshots" "file:///tmp/localrepo"]])
+  :repositories [["snapshots" "file:///tmp/maven/snapshots"]])
