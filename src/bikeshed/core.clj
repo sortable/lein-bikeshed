@@ -164,7 +164,7 @@
                         (with-open [r (io/reader f)]
                           (when (re-matches #"^\s*$" (last (line-seq r)))
                             (.getAbsolutePath f))))
-        bad-files (filter some? (map get-last-line source-files))]
+        bad-files (filter #(not (nil? %)) (map get-last-line source-files))]
     (if (empty? bad-files)
       (println "No files found.")
       (do (println "Badly formatted files:")
