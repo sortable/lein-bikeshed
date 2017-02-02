@@ -313,4 +313,5 @@
         long-lines
         trailing-whitespace
         trailing-blank-lines
-        bad-roots)))
+        bad-roots
+        bad-methods)))
