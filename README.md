@@ -1,4 +1,4 @@
-# lein-bikeshed
+# lein-bikeshed-sortable
 
 A Leiningen plugin designed to tell you your code is bad, and that you
 should feel bad.
@@ -8,7 +8,8 @@ should feel bad.
 Add to your ~/.lein/profiles.clj:
 
 ```clojure
-{:user {:plugins [[lein-bikeshed "0.4.1"]]}}
+; need access to sortable's private repo!
+{:user {:plugins [[lein-bikeshed-sortable "0.4.2-SNAPSHOT"]]}}
 ```
 
 Just run `lein bikeshed` on your project:
@@ -50,7 +51,8 @@ Checking for arguments colliding with clojure.core functions.
 | -H, --no-help-me, --help-me | false   | Show help                   |
 | -v, --no-verbose, --verbose | false   | Display missing doc strings |
 | -m, --max-line-length       |         | Max line length             |
-| -x, --exclude-profiles |        | Comma-separated profile exclusion |
+| -x, --exclude-profiles      |         | Comma-separated profile exclusion |
+| -r, --allow-redefs-in-tests | false   | Allow with-redefs in test sources |
 
 You can also add the `:bikeshed` option map directly to your `project.clj`:
 
