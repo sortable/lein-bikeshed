@@ -1,6 +1,6 @@
 (ns bikeshed.core
   "Define all the functionalities of bikeshed"
-  (:require [clojure.string :refer [blank? starts-with? trim join]]
+  (:require [clojure.string :refer [blank? trim join]]
             [clojure.java.io :as io]
             [clojure.tools.namespace.file :as ns-file]
             [clojure.tools.namespace.find :as ns-find])
@@ -283,7 +283,7 @@
   [project & opts]
   (let [get-files (fn [paths]
                     (remove
-                      #(starts-with? (.getName %) ".")
+                      #(.startsWith (.getName %) ".")
                       (mapcat
                         #(-> % io/file
                              (find-sources-in-dir [".clj" ".cljs" ".cljc" ".cljx"]))
