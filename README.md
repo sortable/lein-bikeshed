@@ -50,7 +50,7 @@ Checking for arguments colliding with clojure.core functions.
 | --------------------------- | ------- | --------------------------- |
 | -H, --no-help-me, --help-me | false   | Show help                   |
 | -v, --no-verbose, --verbose | false   | Display missing doc strings |
-| -m, --max-line-length       |         | Max line length             |
+| -m, --max-line-length       |         | Max line length (add `; bikeshed: allow-long` to end of line for exception) |
 | -x, --exclude-profiles      |         | Comma-separated profile exclusion |
 | -r, --allow-redefs-in-tests | false   | Allow with-redefs in test sources |
 
