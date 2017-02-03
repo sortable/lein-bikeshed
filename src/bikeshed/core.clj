@@ -290,7 +290,7 @@
                         (flatten paths))))
         all-source-files (get-files (get-all project :source-paths :test-paths))
         options (first opts)
-        allow-redefs-in-tests (:allow-redefs-in-tests options)
+        allow-redefs-in-tests (:redefs-in-tests options)
         long-lines (if (nil? (:max-line-length options))
                      (long-lines all-source-files)
                      (long-lines all-source-files
@@ -307,11 +307,12 @@
         bad-roots (bad-roots (if allow-redefs-in-tests
                                non-test-files
                                all-source-files))
-        bad-methods (missing-doc-strings project (:verbose options))
-        bad-arguments (check-all-arguments project)]
+        missing-docs (missing-doc-strings project (:verbose options))
+        bad-arguments (when-not (:shadow-clojure-core options)
+                        (check-all-arguments project))]
     (or bad-arguments
         long-lines
         trailing-whitespace
         trailing-blank-lines
         bad-roots
-        bad-methods)))
+        missing-docs)))

@@ -52,7 +52,8 @@ Checking for arguments colliding with clojure.core functions.
 | -v, --no-verbose, --verbose | false   | Display missing doc strings |
 | -m, --max-line-length       |         | Max line length (add `; bikeshed: allow-long` to end of line for exception) |
 | -x, --exclude-profiles      |         | Comma-separated profile exclusion |
-| -r, --allow-redefs-in-tests | false   | Allow with-redefs in test sources |
+| -r, --redefs-in-tests       | false   | Allow `with-redefs` in test sources |
+| -s, --shadow-clojure-core   | false   | Allow shadowing names from clojure.core |
 
 You can also add the `:bikeshed` option map directly to your `project.clj`:
 

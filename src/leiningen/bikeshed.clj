@@ -19,7 +19,9 @@
           :flag true :default false]
          ["-v" "--verbose" "Display missing doc strings"
           :flag true :default false]
-         ["-r" "--allow-redefs-in-tests" "Allow with-redefs in test sources"
+         ["-r" "--redefs-in-tests" "Allow with-redefs in test sources"
+          :flag true :default false]
+         ["-s" "--shadow-clojure-core" "Allow shadowing names from clojure.core"
           :flag true :default false]
          ["-m" "--max-line-length" "Max line length"
           :parse-fn #(Integer/parseInt %)]
