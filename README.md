@@ -65,6 +65,14 @@ You can also add the `:bikeshed` option map directly to your `project.clj`:
   :dependencies [[clj-http "3.3.0"]])
 ```
 
+## docstrings
+
+You tell bikeshed to ignore a missing docstring by adding `:bikeshed/no-doc` as metadata to your var. e.g.
+
+```clojure
+(def ^:bikeshed/no-doc foo 42)
+```
+
 ## License
 
 Copyright © 2012 Matthew Lee Hinman & Sonian

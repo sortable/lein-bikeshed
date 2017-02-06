@@ -21,6 +21,10 @@
   []
   nil)
 
+(defn ^:bikeshed/no-doc lack-of-docstring-ignored
+  []
+  nil)
+
 (defn empty-docstring
   "" ;; hah! take that lein-bikeshed
   []
@@ -102,9 +106,12 @@
 
 (defn has-doc
   "Returns a map of method name to true/false depending on docstring occurance."
-  [function-name]
-  {(str function-name) (and (boolean (:doc (meta function-name)))
-                            (not= "" (:doc (meta function-name))))})
+  [fn-var]
+  (let [metadata (meta fn-var)]
+    (prn fn-var (:bikeshed/no-doc metadata))
+    {(str fn-var) (or (:bikeshed/no-doc metadata)
+                      (and (boolean (:doc metadata))
+                           (not= "" (:doc metadata))))}))
 
 (defn has-ns-doc
   "Returns a map of namespace to true/false depending on docstring occurance."
