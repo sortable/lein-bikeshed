@@ -256,7 +256,8 @@
       (or (-> no-docstrings count pos?)
           (-> no-ns-doc count pos?)))
     (catch Throwable t
-      (println "Sorry, I wasn't able to read your source files -" t))))
+      (println "Sorry, I wasn't able to read your source files -" t)
+      (.printStackTrace t))))
 
 (defn- wrong-arguments
   "Return the list of wrong arguments for the provided function name"
