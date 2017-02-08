@@ -54,6 +54,7 @@ Checking for arguments colliding with clojure.core functions.
 | -x, --exclude-profiles      |         | Comma-separated profile exclusion |
 | -r, --redefs-in-tests       | false   | Allow `with-redefs` in test sources |
 | -s, --shadow-clojure-core   | false   | Allow shadowing names from clojure.core |
+| -p, --skip-private-docs     | false   | When set, allow private vars to have no docstring |
 
 You can also add the `:bikeshed` option map directly to your `project.clj`:
 
@@ -67,7 +68,8 @@ You can also add the `:bikeshed` option map directly to your `project.clj`:
 
 ## docstrings
 
-You tell bikeshed to ignore a missing docstring by adding `:bikeshed/no-doc` as metadata to your var. e.g.
+You can tell bikeshed to ignore a missing docstring by adding
+`:bikeshed/no-doc` as metadata to your var. e.g.
 
 ```clojure
 (def ^:bikeshed/no-doc foo 42)

@@ -30,6 +30,10 @@
   []
   nil)
 
+(defn- private-no-docstring
+  []
+  nil)
+
 (defn colliding-arguments
   "Arguments will be colliding"
   ([map])
@@ -105,11 +109,13 @@
       [])))
 
 (defn has-doc
-  "Returns a map of method name to true/false depending on docstring occurance."
-  [fn-var]
+  "Returns a map of method name to true/false depending on docstring occurance.
+  If skip-private-docs is true, don't report missing doc on vars marked
+  private."
+  [skip-private-docs fn-var]
   (let [metadata (meta fn-var)]
-    (prn fn-var (:bikeshed/no-doc metadata))
     {(str fn-var) (or (:bikeshed/no-doc metadata)
+                      (and skip-private-docs (:private metadata))
                       (and (boolean (:doc metadata))
                            (not= "" (:doc metadata))))}))
 
@@ -197,8 +203,10 @@
           true))))
 
 (defn missing-doc-strings
-  "Report the percentage of missing doc strings."
-  [project verbose]
+  "Report the percentage of missing doc strings. Does not check test code! If
+  verbose is true, print each var missing docs. If skip-private-docs is true,
+  ignore missing docstrings on vars marked private."
+  [project verbose skip-private-docs]
   (println "\nChecking whether you keep up with your docstrings.")
   (try
     (let [source-files (mapcat #(-> % io/file
@@ -209,7 +217,7 @@
                               (remove nil?))
           all-publics (mapcat read-namespace source-files)
           no-docstrings (->> all-publics
-                             (mapcat has-doc)
+                             (mapcat (partial has-doc skip-private-docs))
                              (filter #(= (val %) false)))
           no-ns-doc (->> all-namespaces
                          (mapcat has-ns-doc)
@@ -314,7 +322,10 @@
         bad-roots (bad-roots (if allow-redefs-in-tests
                                non-test-files
                                all-source-files))
-        missing-docs (missing-doc-strings project (:verbose options))
+        missing-docs (missing-doc-strings
+                       project
+                       (:verbose options)
+                       (:skip-private-docs options))
         bad-arguments (when-not (:shadow-clojure-core options)
                         (check-all-arguments project))]
     (or bad-arguments

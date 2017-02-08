@@ -23,6 +23,8 @@
           :flag true :default false]
          ["-s" "--shadow-clojure-core" "Allow shadowing names from clojure.core"
           :flag true :default false]
+         ["-p" "--skip-private-docs" "Allow private vars to not have docstrings"
+          :flag true :default false]
          ["-m" "--max-line-length" "Max line length"
           :parse-fn #(Integer/parseInt %)]
          ["-x" "--exclude-profiles" "Comma-separated profile exclusions"
