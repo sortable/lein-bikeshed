@@ -39,6 +39,12 @@
   ([map])
   ([map first]))
 
+;; We should't complain about missing docstring on generated class
+(def proxied-date
+  "proxy example"
+  (proxy [java.util.Date] []
+    (valueOf [s] (java.util.Date.))))
+
 (defn file-with-extension?
   "Returns true if the java.io.File represents a file whose name ends
   with one of the Strings in extensions."
@@ -94,18 +100,18 @@
       nil)))
 
 (defn read-namespace
-  "Reads a file, returning a map of the namespace to a vector of maps with
-  information about each var in the namespace."
-  [f]
+  "Returns a seq of the interned vars found in the namespace(s?) in file."
+  [file]
   (try
-    (let [ns-dec (ns-file/read-file-ns-decl f)
+    (let [ns-dec (ns-file/read-file-ns-decl file)
           ns-name (second ns-dec)]
+      (println ns-name)
       (require ns-name)
       (->> ns-name
            ns-interns
            vals))
     (catch Exception e
-      (println (str "Unable to parse " f ": " e))
+      (println (str "Unable to parse " file ": " e))
       [])))
 
 (defn has-doc
@@ -113,8 +119,10 @@
   If skip-private-docs is true, don't report missing doc on vars marked
   private."
   [skip-private-docs fn-var]
-  (let [metadata (meta fn-var)]
-    {(str fn-var) (or (:bikeshed/no-doc metadata)
+  (let [metadata (meta fn-var)
+        fn-name (str fn-var)]
+    {fn-name (or (:bikeshed/no-doc metadata)
+                      (re-find #"\.proxy\$" fn-name) ; ignore vars created by proxy macro
                       (and skip-private-docs (:private metadata))
                       (and (boolean (:doc metadata))
                            (not= "" (:doc metadata))))}))
